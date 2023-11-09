@@ -1,0 +1,272 @@
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
+*, *::before, *::after {
+  padding: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Permanent Marker", cursive;
+  background-color: var(--backgroundColor, #333);
+  color: #fff;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  place-items: center;
+  font-size: 24px;
+  perspective: 720px;
+  overflow: hidden;
+}
+body *:not(:empty) {
+  transform-style: preserve-3d;
+}
+
+input[type=checkbox] {
+  position: fixed;
+  display: none;
+}
+input[type=checkbox]#animate:checked ~ .scene {
+  --animationPlayState: running;
+  --animationOn: 1;
+}
+input[type=checkbox]#threeD:checked ~ .scene {
+  --3d: 1;
+  --mbm: none;
+  --backgroundColor: #444;
+}
+input[type=checkbox]#threeD:checked ~ .backgroundColor {
+  --backgroundColor: #444;
+}
+
+.backgroundColor {
+  position: fixed;
+  inset: 0;
+  background-color: var(--backgroundColor, #333);
+}
+
+.scene {
+  position: absolute;
+  transform: rotateX(calc(var(--3d, 0) * (30deg - 60deg * var(--y, 0)))) rotateY(calc(var(--3d, 0) * (100deg * var(--x, 0) - 50deg))) translateZ(-3em);
+  transition: transform 1s ease-out;
+}
+
+.back {
+  position: absolute;
+  inset: -50em;
+  background-color: var(--backgroundColor, #333);
+  background-image: radial-gradient(transparent 25em, var(--backgroundColor, #333) 50em), repeating-linear-gradient(90deg, #fff1 0 2px, #fff0 0 2em), repeating-linear-gradient(#fff1 0 2px, #fff0 0 2em);
+  transition: background-color 0.5s;
+}
+
+h1 {
+  position: absolute;
+  inset-inline: -10em;
+  top: -5em;
+  text-align: center;
+}
+h1 > i {
+  color: var(--color);
+  --utz: 0.2;
+}
+
+.button {
+  position: absolute;
+  top: 7em;
+  width: 6em;
+  height: 2em;
+}
+.button svg {
+  width: 1em;
+  fill: var(--svgFill);
+  transition: fill 0.5s;
+}
+.button[for=animate] {
+  left: -7em;
+  --utz: calc(0.4 + 0.6 * (1 - var(--animationOn, 0)));
+  --svgFill: hsl(200 50% calc(var(--animationOn, 0) * 50% + 50%));
+}
+.button[for=threeD] {
+  right: -7em;
+  --utz: calc(0.4 + 0.6 * (1 - var(--3d, 0)));
+  --svgFill: hsl(200 50% calc(var(--3d, 0) * 50% + 50%));
+}
+.button > i {
+  background-color: var(--color);
+  border-radius: 1em;
+}
+.button > i:last-child {
+  display: grid;
+  place-items: center;
+}
+
+.piston {
+  position: absolute;
+  mix-blend-mode: var(--mbm, color-dodge);
+}
+
+.wheel {
+  position: absolute;
+  left: 2em;
+  top: -5em;
+  width: 10em;
+  height: 10em;
+  transform-style: preserve-3d;
+  -webkit-animation: wheelRotate 3s infinite linear var(--animationPlayState, paused);
+          animation: wheelRotate 3s infinite linear var(--animationPlayState, paused);
+  --utz: var(--3d, 0);
+}
+@-webkit-keyframes wheelRotate {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+@keyframes wheelRotate {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+.wheel > i {
+  border-radius: 50%;
+  background-image: radial-gradient(circle at 50% 1em, var(--color) 0 1.25em, transparent 0), radial-gradient(var(--color) 0 1em, transparent 0 4em, var(--color) 0), repeating-conic-gradient(from -10deg, var(--color) 0 20deg, transparent 0 72deg);
+}
+.wheel::after {
+  content: "";
+  position: absolute;
+  left: 4.75em;
+  top: 4.75em;
+  width: 0.5em;
+  height: 0.5em;
+  background-image: linear-gradient(#555 0.2em, #000, #555 0.3em);
+  transform: translateZ(calc(var(--3d, 0) * 1.5em));
+  border-radius: 50%;
+  transition: transform 0.5s;
+}
+
+.rod {
+  position: absolute;
+  left: -22em;
+  top: -1.5em;
+  width: 15.5em;
+  height: 3em;
+  -webkit-animation: rodMovement 1.5s -0.75s infinite cubic-bezier(0.32, 0, 0.52, 1) alternate var(--animationPlayState, paused);
+          animation: rodMovement 1.5s -0.75s infinite cubic-bezier(0.32, 0, 0.52, 1) alternate var(--animationPlayState, paused);
+  --utz: var(--3d, 0);
+}
+@-webkit-keyframes rodMovement {
+  to {
+    transform: translateX(8em);
+  }
+}
+@keyframes rodMovement {
+  to {
+    transform: translateX(8em);
+  }
+}
+.rod > i {
+  border-radius: 5em;
+  outline: 0.5em solid var(--color);
+  outline-offset: -1em;
+  background-image: radial-gradient(circle at 14em 1.5em, var(--color) 1.25em, transparent 0);
+}
+
+.crankZ {
+  transform: translateZ(calc(var(--3d, 0) * 1.5em));
+  transition: transform 0.5s;
+}
+
+.crank {
+  position: absolute;
+  left: 13em;
+  top: 0.5em;
+  width: 13em;
+  height: 2em;
+  border-radius: 1em;
+  transform-origin: 1em 50%;
+  -webkit-animation: crankSwing 1.5s infinite cubic-bezier(0.35, 0, 0.65, 1) alternate var(--animationPlayState, paused);
+          animation: crankSwing 1.5s infinite cubic-bezier(0.35, 0, 0.65, 1) alternate var(--animationPlayState, paused);
+  --utz: var(--3d, 0);
+}
+@-webkit-keyframes crankSwing {
+  from {
+    transform: rotateZ(-0.372168534rad);
+  }
+  to {
+    transform: rotateZ(0.372168534rad);
+  }
+}
+@keyframes crankSwing {
+  from {
+    transform: rotateZ(-0.372168534rad);
+  }
+  to {
+    transform: rotateZ(0.372168534rad);
+  }
+}
+.crank > i {
+  border-radius: 1em;
+  border: 0.5em solid var(--color);
+  background-image: radial-gradient(circle at 0.5em 0.5em, var(--color) 1em, transparent 0), radial-gradient(circle at 11.5em 0.5em, var(--color) 1em, transparent 0);
+}
+.crank::before, .crank::after {
+  content: "";
+  position: absolute;
+  left: 0.75em;
+  top: 0.75em;
+  width: 0.5em;
+  height: 0.5em;
+  background-image: linear-gradient(#555 0.2em, #000, #555 0.3em);
+  transform: translateZ(calc(var(--3d, 0) * 1.5em));
+  z-index: 1;
+  border-radius: 50%;
+  transition: transform 0.5s;
+}
+.crank::after {
+  left: 11.75em;
+}
+
+i {
+  --color: hsl(200 50% var(--light, 0%));
+  position: absolute;
+  inset: 0;
+  transform: translateZ(calc(var(--tz, 0) * var(--utz, 1)));
+  transition: all 0.5s;
+}
+i:nth-child(1) {
+  --tz: 0em;
+  --light: 45%;
+}
+i:nth-child(2) {
+  --tz: 0.25em;
+  --light: 51%;
+}
+i:nth-child(3) {
+  --tz: 0.5em;
+  --light: 57%;
+}
+i:nth-child(4) {
+  --tz: 0.75em;
+  --light: 57%;
+}
+i:nth-child(5) {
+  --tz: 1em;
+  --light: 51%;
+}
+i:nth-child(6) {
+  --tz: 1.25em;
+  --light: 45%;
+}
+i:first-child {
+  filter: drop-shadow(0 0 0.25em #000a);
+}
+i:not(:nth-child(6)) {
+  opacity: var(--3d, 0);
+}
+.piston i:nth-child(6) {
+  filter: brightness(var(--3d, 0)) drop-shadow(1px 1px 0 hsla(0, 0%, 100%, calc(1 - var(--3d, 0)))) drop-shadow(-1px 1px 0 hsl(0 0% 100%/calc(1 - var(--3d, 0)))) drop-shadow(-1px -1px 0 hsl(0 0% 100%/calc(1 - var(--3d, 0)))) drop-shadow(1px -1px 0 hsl(0 0% 100%/calc(1 - var(--3d, 0))));
+}
